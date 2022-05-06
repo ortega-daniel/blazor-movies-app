@@ -28,12 +28,12 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Genres:</label>
-        <InputSelectMultiple Items="_genres" SelectedItems="Movie.Genres"  MapValue="(x => x.Id)" MapText="(x => x.Name)" ReturnSelectedValues="GetSelectedGenres" />
+        <InputSelectMultiple Items="_genres" SelectedItems="_genresCopy"  MapValue="(x => x.Id)" MapText="(x => x.Name)" ReturnSelectedValues="GetSelectedGenres" />
         <ValidationMessage For="@(() => Movie.Genres)" />
     </div>
     <div class="mb-3">
         <label class="form-label">Actors:</label>
-        <InputSelectMultiple Items="_actors" SelectedItems="Movie.Actors" MapValue="(x => x.Id)" MapText="@(x => $"{x.FirstName} {x.LastName}")" ReturnSelectedValues="GetSelectedActors" />
+        <InputSelectMultiple Items="_actors" SelectedItems="_actorsCopy" MapValue="(x => x.Id)" MapText="@(x => $"{x.FirstName} {x.LastName}")" ReturnSelectedValues="GetSelectedActors" />
         <ValidationMessage For="@(() => Movie.Actors)" />
     </div>
     <div>
@@ -43,12 +43,13 @@
 
 @code {
     [Parameter] public MovieDto Movie { get; set; } = new();
-    [Parameter] public List<GenreDto> Genres { get; set; }
-    [Parameter] public List<ActorDto> Actors { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }
 
     private List<GenreDto> _genres = new();
     private List<ActorDto> _actors = new();
+
+    private List<GenreDto> _genresCopy = new();
+    private List<ActorDto> _actorsCopy = new();
 
     private void GetSelectedGenres(List<int> selectedGenres)
     {
@@ -82,7 +83,13 @@
 
     protected async override Task OnInitializedAsync()
     {
-        _genres = Genres.Any() ? Genres : await genreApi.Get();
-        _actors = Actors.Any() ? Actors : await actorApi.Get();
+        _genres =  await genreApi.Get();
+        _actors = await actorApi.Get();
+    }
+
+    protected override void OnParametersSet()
+    {
+        _genresCopy = Movie.Genres;
+        _actorsCopy = Movie.Actors;
     }
 }

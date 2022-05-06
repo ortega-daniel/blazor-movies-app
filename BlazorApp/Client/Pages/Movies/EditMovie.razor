@@ -5,7 +5,7 @@
 @inject NavigationManager navigationManager
 
 <h3 class="display-6 mb-2">Edit movie</h3>
-<MovieAddEditForm Movie="_model" Genres="_genres" Actors="_actors" OnValidSubmit="Edit"></MovieAddEditForm>
+<MovieAddEditForm Movie="_model" OnValidSubmit="Edit"></MovieAddEditForm>
 @if (_showError)
 {
     <p class="text-danger">The request could not be processed</p>
@@ -23,8 +23,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _genres = await genreApi.Get();
-        _actors = await actorApi.Get();
         _model = await movieApi.GetById(Id);
     }
 
