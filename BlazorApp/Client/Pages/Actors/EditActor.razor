@@ -1,0 +1,42 @@
+﻿@page "/actors/edit/{id:int}"
+@inject IActorApi actorApi
+@inject NavigationManager navigationManager
+
+<h3 class="display-6 mb-2">Editactor</h3>
+<ActorAddEditForm Actor="_model" OnValidSubmit="Edit"></ActorAddEditForm>
+@if (_showError)
+{
+    <p class="text-danger">The request could not be processed</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private ActorDto _model = new();
+    private bool _loading = false;
+    private bool _showError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = await actorApi.GetById(Id);
+    }
+
+    private async Task Edit()
+    {
+        _loading = true;
+        var result = await actorApi.Update(_model);
+
+        if (result is null)
+        {
+            navigationManager.NavigateTo("actors");
+        }
+        else
+        {
+            _showError = true;
+            Console.WriteLine(result);
+        }
+
+        _loading = false;
+    }
+}

@@ -1,0 +1,64 @@
+﻿@typeparam TItem
+@inject IJSRuntime Js
+
+<select @ref="_elemReference" class="form-control" @onchange="OnChange" multiple>
+    @foreach (var item in Items)
+    {
+        if (IsSelected(item))
+        {
+            <option value="@MapValue(item)" selected>@MapText(item)</option>   
+        }
+        else
+        {
+            <option value="@MapValue(item)">@MapText(item)</option>
+        }
+   }
+</select>
+
+@code {
+    [Parameter] public List<TItem> Items { get; set; }
+    [Parameter] public List<TItem> SelectedItems { get; set; }
+    [Parameter] public EventCallback<List<int>> ReturnSelectedValues { get; set; }
+    [Parameter] public Func<TItem, int> MapValue { get; set; }
+    [Parameter] public Func<TItem, string> MapText { get; set; }
+
+    private ElementReference _elemReference;
+    private List<int> _selectedItems = new();
+
+    private bool IsSelected(TItem item)
+    {
+        if (SelectedItems is not null)
+        {
+            if (SelectedItems.Any())
+            {
+                if (SelectedItems.Contains(item))
+                    return true;
+                else
+                    return false;   
+            }
+        }
+
+        return false;
+    }
+
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        _selectedItems = new();
+        var selections = await Js.InvokeAsync<List<string>>("getSelectedValues", _elemReference);
+
+        foreach (var item in selections)
+        {
+            if (int.TryParse(item, out int value))
+            {
+                _selectedItems.Add(value);
+            }
+        }
+
+        await ReturnSelectedValues.InvokeAsync(_selectedItems);
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}

@@ -1,0 +1,29 @@
+﻿@page "/movies/edit/{id:int}"
+@page "/movies/edit/{id:int}/{title}"
+@inject IMovieApi movieApi
+
+<h3 class="display-6 mb-2">Edit movie</h3>
+<MovieAddEditForm Movie="_movie" OnValidSubmit="Edit" />
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+
+    private MovieDto _movie;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _movie = new MovieDto
+        {
+            Id = this.Id,
+            Title = this.Title,
+        };
+    }
+
+    private void Edit()
+    {
+        
+    }
+}

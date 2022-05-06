@@ -1,0 +1,30 @@
+﻿@inject IJSRuntime js
+@using Model.Entities
+
+<input type="checkbox" @bind="_show" />
+<div>
+    <GenericListComponent GenericList="Movies">
+        <ListAny Context="movie">
+            <MovieSingleComponent Movie="movie" ShowButton="_show" DeleteMovie="DeleteMovie" />
+        </ListAny>
+    </GenericListComponent>
+</div>
+
+@code {
+    [Parameter]
+    public List<Movie> Movies { get; set; }
+
+    private bool _show = false;
+
+    private async Task DeleteMovie(Movie movie)
+    {
+        bool confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete the movie {movie.Title}?");
+
+        if (confirm)
+        {
+            Movies.Remove(movie);
+            //Console.WriteLine($"Deleting movie {movie.Title}");
+            await js.InvokeVoidAsync("console.log", $"Deleting movie {movie.Title}");
+        }
+    }
+}

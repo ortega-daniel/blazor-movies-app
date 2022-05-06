@@ -1,0 +1,17 @@
+﻿<div class="card" style="width: 15rem; margin-right: 2%">
+  <img src="@Model.Picture" class="card-img-top" style="width: 100%; height: auto;" alt="@($"{Model.FirstName} {Model.LastName} picture")">
+  <div class="card-body">
+    <h5 class="card-title">
+        @($"{Model.FirstName} {Model.LastName}")
+    </h5>
+    <p class="card-text mb-3">
+        @Model.Biography
+    </p>
+    <a href="actors/edit/@Model.Id" class="btn btn-sm btn-primary">Edit</a>
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public ActorDto Model { get; set; }
+}

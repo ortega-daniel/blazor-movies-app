@@ -1,0 +1,46 @@
+﻿@page "/movies/add"
+@inject IGenreApi genreApi
+@inject IActorApi actorApi
+@inject IMovieApi movieApi
+@inject NavigationManager navigationManager
+
+<h3 class="display-6 mb-2">Add a new movie</h3>
+<MovieAddEditForm Movie="_movie" Genres="_genres" Actors="_actors" OnValidSubmit="Add"></MovieAddEditForm>
+@if(_showError)
+{
+    <p class="text-danger">the request could not be processed</p>
+}
+
+@code {
+    private MovieDto _movie = new();
+    private List<GenreDto> _genres = new();
+    private List<ActorDto> _actors = new();
+    private bool _loading = false;
+    private bool _showError = false;
+
+    private async Task Add()
+    {
+        _loading = true;
+        _showError = false;
+
+        var result = await movieApi.Add(_movie);
+
+        if (result is null)
+        {
+            navigationManager.NavigateTo("movies");
+        }
+        else
+        {
+            _showError = true;
+            Console.WriteLine(result);
+        }
+
+        _loading = false;
+    }
+
+    protected async override void OnInitialized()
+    {
+        _genres = await genreApi.Get();
+        _actors = await actorApi.Get();
+    }
+}

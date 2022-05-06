@@ -1,0 +1,56 @@
+﻿@page "/genres"
+@inject IGenreApi genreApi
+
+<h3 class="display-6 mb-2">Genres</h3>
+@if (_loading)
+{
+    <img src="https://www.mansarovar.com.co/app/PQRS/LibraryCSS/giphy.gif" style="height: 20px;" />
+}
+else
+{
+    @if (_model.Any())
+    {
+        <div>
+            <table class="table table-borderless">
+                <colgroup>
+                    <col style="width: 20%;">
+                    <col style="width: 80%;">
+                </colgroup>
+                @*<thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>*@
+                <tbody>
+                    @foreach (var genre in _model)
+                    {
+                        <tr>
+                            <td>@genre.Name</td>
+                            <td><a href="genres/edit/@genre.Id" class="btn btn-secondary">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p>There are no genres to show</p>
+    }
+    <div>
+        <a href="genres/add" class="btn btn-dark">Add genre</a>
+    </div>
+}
+
+@code {
+    private List<GenreDto> _model = new();
+    private bool _loading = false;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _loading = true;
+        _model = await genreApi.Get();
+        _loading = false;
+    }
+}

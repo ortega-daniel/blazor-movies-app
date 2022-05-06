@@ -1,0 +1,39 @@
+﻿@page "/actors"
+@inject IActorApi actorApi
+
+<h3 class="display-6 mb-2">Actors</h3>
+<div class="mt-4 mb-2">
+        <a href="actors/add" class="btn btn-dark">Add actor</a>
+    </div>
+@if (_loading)
+{
+    <img src="https://www.mansarovar.com.co/app/PQRS/LibraryCSS/giphy.gif" style="height: 20px;" />
+}
+else
+{
+    @if (_model.Any())
+    {
+        <div style="display: flex; flex-wrap: wrap;">
+            @foreach (var actor in _model)
+            {
+                <ActorCardComponent Model="actor" />
+            }
+        </div>
+    }
+    else
+    {
+        <p>There are no actors to show</p>
+    }
+}
+
+@code {
+    private List<ActorDto> _model = new();
+    private bool _loading = false;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _loading = true;
+        _model = await actorApi.Get();
+        _loading = false;
+    }
+}

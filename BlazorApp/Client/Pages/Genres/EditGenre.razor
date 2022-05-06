@@ -1,0 +1,42 @@
+﻿@page "/genres/edit/{id:int}"
+@inject IGenreApi genreApi
+@inject NavigationManager navigationManager
+
+<h3 class="display-6 mb-2">Edit genre</h3>
+<GenreAddEditForm Genre="_model" OnValidSubmit="Edit" Loading="_loading"></GenreAddEditForm>
+@if (_showError)
+{
+    <p class="text-danger">The request could not be processed</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private GenreDto _model = new();
+    private bool _loading = false;
+    private bool _showError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = await genreApi.GetById(Id);
+    }
+
+    private async Task Edit()
+    {
+        _loading = true;
+        var result = await genreApi.Update(_model);
+
+        if (result is null)
+        {
+            navigationManager.NavigateTo("genres");
+        }
+        else
+        {
+            _showError = true;
+            Console.WriteLine(result);
+        }
+
+        _loading = false;
+    }
+}

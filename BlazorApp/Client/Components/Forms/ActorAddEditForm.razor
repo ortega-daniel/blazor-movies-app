@@ -1,0 +1,45 @@
+﻿<EditForm Model="Actor" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label class="form-label">First name:</label>
+        <InputText class="form-control" @bind-Value="Actor.FirstName"></InputText>
+        <ValidationMessage For="@(() => Actor.FirstName)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Last name:</label>
+        <InputText class="form-control" @bind-Value="Actor.LastName"></InputText>
+        <ValidationMessage For="@(() => Actor.LastName)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Date of birth:</label>
+        <InputDate class="form-control" @bind-Value="Actor.DateOfBirth"></InputDate>
+        <ValidationMessage For="@(() => Actor.DateOfBirth)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Years active:</label>
+        <InputNumber class="form-control" @bind-Value="Actor.YearsActive"></InputNumber>
+        <ValidationMessage For="@(() => Actor.YearsActive)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Picture:</label>
+        <InputText class="form-control" @bind-Value="Actor.Picture"></InputText>
+        <ValidationMessage For="@(() => Actor.Picture)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Biography:</label>
+        <InputTextArea class="form-control" @bind-Value="Actor.Biography"></InputTextArea>
+        <small class="form-text text-muted">Max characters 100.</small>
+        <ValidationMessage For="@(() => Actor.Biography)" />
+    </div>
+    <div>
+        <button type="submit" class="btn btn-success">Save</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public ActorDto Actor { get; set; }
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+}
