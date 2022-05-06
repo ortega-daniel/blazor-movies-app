@@ -2,24 +2,25 @@
 
 <div style="margin-right: 2%; margin-bottom: 10px; text-align: center;">
     <a href="movie">
-        <img src="@Movie.Poster" alt="Poster" style="width: 225px; height: 300px" />
+        @if(!string.IsNullOrEmpty(Movie.Poster))
+        {
+            <img src="@Movie.Poster" alt="Poster" style="width: 225px; height: 300px" />
+        }
+        else
+        {
+            <img src="https://www.genius100visions.com/wp-content/uploads/2017/09/placeholder-vertical.jpg" alt="Poster placeholder" style="width: 225px; height: 300px" />
+        }
     </a>
     <p style="max-width: 225px; height: 45px; font-size: 15px; font-weight: bold;"><a href="movie">@Movie.TitleFit</a></p>
-
-    @if (ShowButton)
-    {
-        <div>
-            <a class="btn btn-info">Edit</a>
-            <button class="btn btn-danger" @onclick="() => DeleteMovie.InvokeAsync(Movie)">Delete</button>
-        </div>
-    }
+    <div>
+        <a href="movies/edit/@Movie.Id" class="btn btn-sm btn-primary" style="color: white;">Edit</a>
+        <button class="btn btn-sm btn-danger" @onclick="() => DeleteMovie.InvokeAsync(Movie)">Delete</button>
+    </div>
 </div>
 
 @code {
     [Parameter]
-    public Movie Movie { get; set; }
+    public MovieDto Movie { get; set; }
     [Parameter]
-    public bool ShowButton { get; set; }
-    [Parameter]
-    public EventCallback<Movie> DeleteMovie { get; set; }
+    public EventCallback<MovieDto> DeleteMovie { get; set; }
 }

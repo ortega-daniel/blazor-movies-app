@@ -24,6 +24,14 @@
         <label class="form-label">Picture:</label>
         <InputText class="form-control" @bind-Value="Actor.Picture"></InputText>
         <ValidationMessage For="@(() => Actor.Picture)" />
+        @if(!string.IsNullOrEmpty(Actor.Picture))
+        {
+            <img src="@Actor.Picture" alt="Poster Preview" style="width: 225px; height: 300px" class="mt-2" />
+        }
+        else
+        {
+            <img src="https://www.genius100visions.com/wp-content/uploads/2017/09/placeholder-vertical.jpg" alt="Poster Preview" style="width: 225px; height: 300px" class="mt-2" />
+        }
     </div>
     <div class="mb-3">
         <label class="form-label">Biography:</label>

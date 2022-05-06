@@ -10,7 +10,15 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Poster:</label>
-        <InputText class="form-control" @bind-Value="Movie.Poster"></InputText>
+        <InputText class="form-control mb-2" @bind-Value="Movie.Poster"></InputText>
+        @if(!string.IsNullOrEmpty(Movie.Poster))
+        {
+            <img src="@Movie.Poster" alt="Poster Preview" style="width: 225px; height: 300px" />
+        }
+        else
+        {
+            <img src="https://www.genius100visions.com/wp-content/uploads/2017/09/placeholder-vertical.jpg" alt="Poster Preview" style="width: 225px; height: 300px" />
+        }
         <ValidationMessage For="@(() => Movie.Poster)" />
     </div>
     <div class="mb-3">
@@ -20,11 +28,13 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Genres:</label>
-        <InputSelectMultiple Items="_genres" MapValue="(x => x.Id)" MapText="(x => x.Name)" ReturnSelectedValues="GetSelectedGenres" />
+        <InputSelectMultiple Items="_genres" SelectedItems="Movie.Genres"  MapValue="(x => x.Id)" MapText="(x => x.Name)" ReturnSelectedValues="GetSelectedGenres" />
+        <ValidationMessage For="@(() => Movie.Genres)" />
     </div>
     <div class="mb-3">
         <label class="form-label">Actors:</label>
-        <InputSelectMultiple Items="_actors" MapValue="(x => x.Id)" MapText="@(x => $"{x.FirstName} {x.LastName}")" ReturnSelectedValues="GetSelectedActors" />
+        <InputSelectMultiple Items="_actors" SelectedItems="Movie.Actors" MapValue="(x => x.Id)" MapText="@(x => $"{x.FirstName} {x.LastName}")" ReturnSelectedValues="GetSelectedActors" />
+        <ValidationMessage For="@(() => Movie.Actors)" />
     </div>
     <div>
         <button type="submit" class="btn btn-success">Save</button>
@@ -32,7 +42,7 @@
 </EditForm>
 
 @code {
-    [Parameter] public MovieDto Movie { get; set; }
+    [Parameter] public MovieDto Movie { get; set; } = new();
     [Parameter] public List<GenreDto> Genres { get; set; }
     [Parameter] public List<ActorDto> Actors { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }

@@ -1,29 +1,48 @@
 ﻿@page "/movies/edit/{id:int}"
-@page "/movies/edit/{id:int}/{title}"
+@inject IGenreApi genreApi
+@inject IActorApi actorApi
 @inject IMovieApi movieApi
+@inject NavigationManager navigationManager
 
 <h3 class="display-6 mb-2">Edit movie</h3>
-<MovieAddEditForm Movie="_movie" OnValidSubmit="Edit" />
+<MovieAddEditForm Movie="_model" Genres="_genres" Actors="_actors" OnValidSubmit="Edit"></MovieAddEditForm>
+@if (_showError)
+{
+    <p class="text-danger">The request could not be processed</p>
+}
 
 @code {
     [Parameter]
     public int Id { get; set; }
-    [Parameter]
-    public string Title { get; set; }
 
-    private MovieDto _movie;
+    private MovieDto _model = new();
+    private List<GenreDto> _genres = new();
+    private List<ActorDto> _actors = new();
+    private bool _loading = false;
+    private bool _showError = false;
 
     protected override async Task OnInitializedAsync()
     {
-        _movie = new MovieDto
-        {
-            Id = this.Id,
-            Title = this.Title,
-        };
+        _genres = await genreApi.Get();
+        _actors = await actorApi.Get();
+        _model = await movieApi.GetById(Id);
     }
 
-    private void Edit()
+    private async Task Edit()
     {
-        
+        _loading = true;
+        var result = await movieApi.Update(_model);
+
+        if (result is null)
+        {
+            navigationManager.NavigateTo("movies");
+        }
+        else
+        {
+            _showError = true;
+            Console.WriteLine(result);
+        }
+
+        _loading = false;
     }
 }

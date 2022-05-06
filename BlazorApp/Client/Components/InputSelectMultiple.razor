@@ -4,7 +4,7 @@
 <select @ref="_elemReference" class="form-control" @onchange="OnChange" multiple>
     @foreach (var item in Items)
     {
-        if (IsSelected(item))
+        if (IsSelected(MapValue(item)))
         {
             <option value="@MapValue(item)" selected>@MapText(item)</option>   
         }
@@ -25,13 +25,15 @@
     private ElementReference _elemReference;
     private List<int> _selectedItems = new();
 
-    private bool IsSelected(TItem item)
+    private bool IsSelected(int value)
     {
         if (SelectedItems is not null)
         {
             if (SelectedItems.Any())
             {
-                if (SelectedItems.Contains(item))
+                List<int> selectedValues = SelectedItems.Select(t => MapValue(t)).ToList();
+
+                if (selectedValues.Contains(value))
                     return true;
                 else
                     return false;   

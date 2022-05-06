@@ -1,20 +1,7 @@
 ﻿@page "/"
-@page "/home"
-@using Model.Entities
-@inject IMovieApi movieApi
 
-<MovieListComponent Movies="Movies" />
+<h1 class="display-4">Welcome</h1>
 
 @code {
-    public List<Movie> Movies { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        //Movies = movieApi.GetMovies();
-    }
-
-    private void AddMovie()
-    {
-        Movies.Add(new Movie { Title = "Test", ReleaseDate = DateTime.Today });
-    }
 }
