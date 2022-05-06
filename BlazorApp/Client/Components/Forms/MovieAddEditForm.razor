@@ -72,14 +72,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        if (Genres.Any())
-            _genres = Genres;
-        else
-            _genres = await genreApi.Get();
-
-        if (Actors.Any())
-            _actors = Actors;
-        else
-            _actors = await actorApi.Get();
+        _genres = Genres.Any() ? Genres : await genreApi.Get();
+        _actors = Actors.Any() ? Actors : await actorApi.Get();
     }
 }
