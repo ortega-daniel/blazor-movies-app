@@ -53,6 +53,7 @@ namespace BlazorApp.Server.Controllers
                 {
                     Id = m.Id,
                     Title = m.Title,
+                    ReleaseDate = m.ReleaseDate,
                     Poster = m.Poster,
                     Actors = m.Actors.Select(a => new ActorDto
                     {
@@ -82,15 +83,25 @@ namespace BlazorApp.Server.Controllers
                     Title = model.Title,
                     Poster = model.Poster,
                     ReleaseDate = (DateTime)model.ReleaseDate,
-                    Actors = model.Actors.Select(a => new Actor 
-                    { 
-                        Id = a.Id
-                    }).ToList(),
-                    Genres = model.Genres.Select(g => new Genre 
-                    { 
-                        Id = g.Id
-                    }).ToList()
+                    Actors = new List<Actor>(),
+                    Genres = new List<Genre>()
                 };
+
+                foreach (var actor in model.Actors)
+                {
+                    var actorDb = _context.Actors.FirstOrDefault(a => a.Id == actor.Id);
+
+                    if (actorDb is not null)
+                        movie.Actors.Add(actorDb);
+                }
+
+                foreach (var genre in model.Genres)
+                {
+                    var genreDb = _context.Genres.FirstOrDefault(g => g.Id == genre.Id);
+
+                    if (genreDb is not null)
+                        movie.Genres.Add(genreDb);
+                }
 
                 await _context.Movies.AddAsync(movie);
                 await _context.SaveChangesAsync();
@@ -107,16 +118,38 @@ namespace BlazorApp.Server.Controllers
         {
             try
             {
-                var movie = await _context.Movies.FirstOrDefaultAsync(m => m.Id == model.Id);
+                var movie = await _context.Movies
+                    .Include(m => m.Actors)
+                    .Include(m => m.Genres)
+                    .FirstOrDefaultAsync(m => m.Id == model.Id);
 
                 if (movie is null)
                     throw new Exception("Element not found");
 
+                List<Actor> newActors = new();
+                List<Genre> newGenres = new();
+
+                foreach (var actor in model.Actors)
+                {
+                    var actorDb = _context.Actors.FirstOrDefault(a => a.Id == actor.Id);
+
+                    if (actorDb is not null)
+                        newActors.Add(actorDb);
+                }
+
+                foreach (var genre in model.Genres)
+                {
+                    var genreDb = _context.Genres.FirstOrDefault(g => g.Id == genre.Id);
+
+                    if (genreDb is not null)
+                        newGenres.Add(genreDb);
+                }
+
                 movie.Title = model.Title;
                 movie.Poster = model.Poster;
                 movie.ReleaseDate = (DateTime)model.ReleaseDate;
-                movie.Actors = model.Actors.Select(a => new Actor { Id = a.Id }).ToList();
-                movie.Genres= model.Genres.Select(g => new Genre { Id = g.Id }).ToList();
+                movie.Actors = newActors;
+                movie.Genres = newGenres;
 
                 await _context.SaveChangesAsync();
 
